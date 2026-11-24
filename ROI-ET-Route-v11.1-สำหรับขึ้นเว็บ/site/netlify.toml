@@ -1,0 +1,42 @@
+# ROI ET Route — ตั้งค่า Netlify (เว็บ + ระบบหลังบ้าน)
+[build]
+  publish = "."
+  command = "npm install"
+
+[functions]
+  directory = "netlify/functions"
+  node_bundler = "esbuild"
+
+# ไม่ให้ไฟล์ฝั่งเซิร์ฟเวอร์ถูกเปิดดูผ่านเว็บ
+[[redirects]]
+  from = "/netlify/*"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/node_modules/*"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/tests/*"
+  to = "/404.html"
+  status = 404
+  force = true
+
+[[headers]]
+  for = "/admin.html"
+  [headers.values]
+    X-Robots-Tag = "noindex"
+    X-Frame-Options = "DENY"
+
+# แอป (PWA): ให้มือถือเช็กไฟล์ sw.js ใหม่ทุกครั้ง จะได้อัปเดตเว็บทันที
+[[headers]]
+  for = "/sw.js"
+  [headers.values]
+    Cache-Control = "no-cache"
+    Service-Worker-Allowed = "/"
+[[headers]]
+  for = "/manifest.webmanifest"
+  [headers.values]
+    Content-Type = "application/manifest+json; charset=utf-8"

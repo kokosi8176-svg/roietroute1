@@ -1,0 +1,17 @@
+{
+  "name": "ROI ET Route — วางแผนและนำทางส่งของ",
+  "short_name": "ROI ET Route",
+  "description": "วางแผนเส้นทางส่งของในจังหวัดร้อยเอ็ด พร้อมนำทางมีเสียงบอกทาง",
+  "lang": "th",
+  "start_url": "./?source=app",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#132036",
+  "theme_color": "#ff8a1f",
+  "icons": [
+    { "src": "roiet-icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "roiet-icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "roiet-icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

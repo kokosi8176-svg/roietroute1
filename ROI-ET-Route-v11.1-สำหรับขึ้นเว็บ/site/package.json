@@ -1,0 +1,12 @@
+{
+  "name": "roiet-route-backend",
+  "private": true,
+  "type": "module",
+  "description": "ระบบหลังบ้าน ROI ET Route บน Netlify Functions",
+  "dependencies": {
+    "@netlify/blobs": "^11.1.9"
+  },
+  "scripts": {
+    "test": "node tests/api.test.mjs"
+  }
+}

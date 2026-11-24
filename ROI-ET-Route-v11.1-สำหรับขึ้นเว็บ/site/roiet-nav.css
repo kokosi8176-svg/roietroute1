@@ -1,0 +1,229 @@
+/* ROI ET NAVI — หน้าจอนำทาง (ใช้คู่กับ roiet-nav.js) */
+html.rn-open,html.rn-open body{overflow:hidden!important}
+.rn-root{--o1:#ffb84a;--o2:#ff7a12;--ink:#f4f6fb;--glass:rgba(16,24,40,.78);--glass2:rgba(16,24,40,.62);--line:rgba(255,255,255,.1);
+  position:fixed;inset:0;z-index:9000;overflow:hidden;font-family:"Kanit","Sarabun",Tahoma,sans-serif;color:var(--ink);background:#0d1524;user-select:none;-webkit-user-select:none;touch-action:none}
+.rn-root.theme-day{--glass:rgba(255,255,255,.9);--glass2:rgba(255,255,255,.78);--ink:#14233b;--line:rgba(20,35,59,.1);background:#dfe9f2}
+.rn-sky{position:absolute;inset:0;background:linear-gradient(180deg,#0b1220 0%,#1b2a48 30%,#3a3550 46%,#0d1524 47%)}
+.theme-day .rn-sky{background:linear-gradient(180deg,#8fc4ec 0%,#cfe6f6 34%,#fff1dc 46%,#dfe9f2 47%)}
+.theme-sat .rn-sky{background:linear-gradient(180deg,#5d8fbf 0%,#bcd6ea 36%,#e8e2d0 46%,#2c3a2a 47%)}
+.rn-stage{position:absolute;inset:0}
+.rn-wrap{position:absolute;transform-origin:50% 50%;will-change:transform}
+.rn-map{position:absolute;inset:0;background:transparent}
+.rn-map.leaflet-container{background:#1a2333}
+.theme-day .rn-map.leaflet-container{background:#eef1ec}
+.theme-night .rn-map .leaflet-tile-pane{filter:saturate(1.1) brightness(1.08)}
+.rn-fog{position:absolute;inset:0;pointer-events:none;background:linear-gradient(180deg,rgba(13,21,36,.95) 0%,rgba(13,21,36,.55) 16%,rgba(13,21,36,0) 34%)}
+.theme-day .rn-fog{background:linear-gradient(180deg,rgba(214,232,246,.96) 0%,rgba(214,232,246,.55) 16%,rgba(214,232,246,0) 34%)}
+.theme-sat .rn-fog{background:linear-gradient(180deg,rgba(188,214,234,.92) 0%,rgba(188,214,234,.45) 16%,rgba(188,214,234,0) 34%)}
+.rn-root.over .rn-fog{opacity:0}
+
+/* รถ */
+.rn-car{position:absolute;width:56px;height:56px;transform:translate(-50%,-50%);pointer-events:none;z-index:5}
+.rn-car svg{position:absolute;inset:6px;filter:drop-shadow(0 6px 8px rgba(0,0,0,.45))}
+.rn-car path{fill:url(#none);fill:#fff;stroke:#ff7a12;stroke-width:4;stroke-linejoin:round}
+.rn-halo{position:absolute;inset:-14px;border-radius:50%;background:radial-gradient(closest-side,rgba(255,138,31,.45),rgba(255,138,31,0));animation:rn-pulse 2.2s ease-out infinite}
+@keyframes rn-pulse{0%{transform:scale(.6);opacity:1}100%{transform:scale(1.5);opacity:0}}
+
+/* หมุดตั้งบนจอ */
+.rn-pins{position:absolute;left:0;top:0;width:0;height:0;z-index:4;pointer-events:none}
+.rn-pin{position:absolute;left:0;top:0;transform-origin:0 0;will-change:transform}
+.rn-pin b{position:absolute;left:-17px;top:-58px;width:34px;height:34px;display:grid;place-items:center;border-radius:50% 50% 50% 4px;rotate:-45deg;background:linear-gradient(135deg,var(--o1),var(--o2));color:#1b1206;font:700 15px/1 "Kanit",sans-serif;box-shadow:0 8px 16px rgba(0,0,0,.35);border:3px solid #fff}
+.rn-pin b{rotate:none;border-radius:50%}
+.rn-pin i{position:absolute;left:-1.5px;top:-24px;width:3px;height:24px;border-radius:2px;background:#fff;box-shadow:0 0 6px rgba(0,0,0,.4)}
+.rn-pin::after{content:"";position:absolute;left:-9px;top:-4px;width:18px;height:8px;border-radius:50%;background:rgba(0,0,0,.35)}
+.rn-pin.dest b{width:44px;height:44px;left:-22px;top:-70px;font-size:18px;box-shadow:0 0 0 6px rgba(255,138,31,.25),0 10px 22px rgba(0,0,0,.4)}
+.rn-pin.next b{background:#fff;color:#14233b;border-color:#ffb84a;width:28px;height:28px;left:-14px;top:-50px;font-size:13px;opacity:.85}
+.rn-pin.turn i{display:none}
+.rn-pin.turn::after{left:-11px;top:-11px;width:22px;height:22px;background:rgba(255,255,255,.95);border:5px solid #ff7a12;box-sizing:border-box;box-shadow:0 0 0 6px rgba(255,138,31,.3)}
+
+/* ป้ายคำสั่งเลี้ยว */
+.rn-top{position:absolute;left:12px;right:12px;top:calc(10px + env(safe-area-inset-top));z-index:10;display:flex;flex-direction:column;align-items:flex-start;gap:6px;pointer-events:none}
+.rn-man{display:flex;align-items:center;gap:14px;width:min(560px,100%);padding:12px 18px 12px 12px;border-radius:24px;background:linear-gradient(135deg,#132036 0%,#1d2f52 100%);color:#fff;box-shadow:0 18px 40px rgba(5,10,20,.45),inset 0 1px 0 rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.08);transition:background .3s}
+.rn-man.soon{background:linear-gradient(135deg,#ff8a1f 0%,#ff5e00 100%);color:#1b1206;box-shadow:0 18px 44px rgba(255,110,0,.45)}
+.rn-ring{position:relative;flex:0 0 auto;width:78px;height:78px}
+.rn-ring>svg{position:absolute;inset:0;rotate:-90deg}
+.rn-ring>svg circle{fill:rgba(255,255,255,.06);stroke:rgba(255,255,255,.14);stroke-width:7}
+.rn-ring>svg circle.p{fill:none;stroke:#ffb84a;stroke-linecap:round;stroke-dasharray:283;stroke-dashoffset:283;transition:stroke-dashoffset .4s}
+.rn-man.soon .rn-ring>svg circle{stroke:rgba(27,18,6,.18);fill:rgba(255,255,255,.18)}.rn-man.soon .rn-ring>svg circle.p{stroke:#1b1206}
+.rn-arw{position:absolute;inset:14px;width:50px;height:50px;color:#fff}
+.rn-man.soon .rn-arw{color:#1b1206}
+.rn-arw.now{animation:rn-nudge .9s ease-in-out infinite}
+@keyframes rn-nudge{50%{transform:translateY(-4px) scale(1.06)}}
+.rn-mtx{display:flex;flex-direction:column;min-width:0;line-height:1.15}
+.rn-mtx b{font:700 clamp(30px,8vw,44px)/1 "Kanit",sans-serif;letter-spacing:-.01em}
+.rn-mtx span{margin-top:4px;font:500 clamp(15px,4vw,19px)/1.3 "Kanit",sans-serif;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.rn-mtx small{opacity:.75;font-size:13px}
+.rn-then{display:flex;align-items:center;gap:6px;margin-left:14px;padding:6px 12px;border-radius:0 0 14px 14px;background:rgba(19,32,54,.92);color:#dfe7f3;font-size:14px;box-shadow:0 10px 20px rgba(5,10,20,.3)}
+.rn-then .rn-arw{position:static;width:20px;height:20px;color:#ffb84a}
+
+/* ปุ่มด้านข้าง */
+.rn-side{position:absolute;right:12px;top:calc(140px + env(safe-area-inset-top));z-index:10;display:flex;flex-direction:column;gap:10px}
+.rn-side button{width:48px;height:48px;display:grid;place-items:center;border:1px solid var(--line);border-radius:16px;background:var(--glass);color:var(--ink);backdrop-filter:blur(10px);box-shadow:0 8px 20px rgba(5,10,20,.25);cursor:pointer}
+.rn-side button.off{color:#ff6b6b}.rn-side button.on{background:#ff8a1f;color:#1b1206}
+.rn-side button[hidden]{display:none}
+.rn-ic{width:22px;height:22px}
+
+/* ความเร็ว */
+.rn-speed{position:absolute;left:14px;bottom:calc(196px + env(safe-area-inset-bottom));z-index:10;width:70px;height:70px;display:flex;flex-direction:column;align-items:center;justify-content:center;border-radius:50%;background:var(--glass);border:3px solid rgba(255,255,255,.18);backdrop-filter:blur(10px);box-shadow:0 10px 24px rgba(5,10,20,.3);color:var(--ink)}
+.rn-speed b{font:700 24px/1 "Kanit",sans-serif}.rn-speed small{font-size:10px;opacity:.7}
+.rn-speed.fast{border-color:#ff4d4f;color:#ff4d4f;animation:rn-nudge .8s infinite}
+
+/* ผู้ช่วยนำทาง "น้องเอ็ด" */
+.rn-bub{position:absolute;left:96px;right:74px;bottom:calc(206px + env(safe-area-inset-bottom));z-index:11;display:flex;align-items:flex-end;gap:8px;opacity:0;transform:translateY(10px);transition:.3s;pointer-events:none}
+.rn-bub.on{opacity:1;transform:none}
+.rn-bub span{max-width:420px;padding:9px 13px;border-radius:16px 16px 16px 4px;background:#fff;color:#14233b;font-size:14px;line-height:1.4;box-shadow:0 10px 24px rgba(5,10,20,.3)}
+.rn-av{flex:0 0 auto;width:38px;height:38px}
+.rn-av svg{width:100%;height:100%}
+.rn-av circle{fill:url(#none);fill:#ff8a1f;stroke:#fff;stroke-width:2.5}.rn-av circle.e{fill:#1b1206;stroke:none}.rn-av path.m{fill:none;stroke:#1b1206;stroke-width:2.6;stroke-linecap:round}
+.rn-bub.pop .rn-av{animation:rn-hop .5s ease}
+@keyframes rn-hop{40%{transform:translateY(-6px) rotate(-8deg)}}
+
+/* แผ่นล่าง */
+.rn-sheet{position:absolute;left:10px;right:10px;bottom:calc(10px + env(safe-area-inset-bottom));z-index:10;padding:14px 16px 12px;border-radius:24px;background:var(--glass);border:1px solid var(--line);backdrop-filter:blur(14px);box-shadow:0 -6px 30px rgba(5,10,20,.3);color:var(--ink);max-width:640px;margin:0 auto}
+.rn-dest{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.rn-dn{display:flex;flex-direction:column;min-width:0}
+.rn-dn small{color:#ffb84a;font-weight:600;font-size:12px;letter-spacing:.02em}
+.theme-day .rn-dn small{color:#d26a00}
+.rn-dn b{font:600 19px/1.25 "Kanit",sans-serif;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rn-dn em{font-style:normal;font-size:12.5px;opacity:.8}
+.rn-dn em.late{color:#ff5d5d;opacity:1;font-weight:600}
+.rn-dn em.late::before{content:"⚠ "}
+.rn-eta{text-align:right;flex:0 0 auto}
+.rn-eta b{display:block;font:700 26px/1 "Kanit",sans-serif;color:#27d17f}
+.theme-day .rn-eta b{color:#14904f}
+.rn-eta small{font-size:12.5px;opacity:.8}
+.rn-rail{position:relative;display:flex;justify-content:space-between;align-items:center;margin:12px 4px 10px;min-height:26px}
+.rn-track{position:absolute;left:12px;right:12px;top:50%;height:4px;margin-top:-2px;border-radius:4px;background:rgba(127,140,160,.3)}
+.rn-track i{display:block;height:100%;border-radius:4px;background:linear-gradient(90deg,#27d17f,#ffb84a)}
+.rn-bead{position:relative;z-index:1;width:24px;height:24px;display:grid;place-items:center;border-radius:50%;background:#2b3852;color:#cfd8e6;font-size:11px;font-weight:600;border:2px solid rgba(255,255,255,.15)}
+.theme-day .rn-bead{background:#e7ecf3;color:#4b5a70}
+.rn-bead.ok{background:#27b879;color:#fff}.rn-bead.fail{background:#e5484d;color:#fff}
+.rn-bead.cur{width:30px;height:30px;background:linear-gradient(135deg,#ffb84a,#ff7a12);color:#1b1206;border-color:#fff;box-shadow:0 0 0 5px rgba(255,138,31,.25)}
+.rn-bead.home{font-size:13px}
+.rn-acts{display:flex;gap:8px}
+.rn-b{flex:1;display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:46px;padding:0 10px;border:1px solid var(--line);border-radius:14px;background:rgba(127,140,160,.14);color:var(--ink);font:600 14px "Kanit",sans-serif;cursor:pointer}
+.rn-b.ok{background:linear-gradient(135deg,#27d17f,#14a862);border:0;color:#062615}
+.rn-b.on{background:#ff8a1f;color:#1b1206;border:0}
+.rn-b.x{flex:0 0 auto;padding:0 14px}
+.rn-root.sim .rn-sheet{box-shadow:0 0 0 2px #ff8a1f,0 -6px 30px rgba(5,10,20,.3)}
+.rn-attr{position:absolute;right:8px;bottom:2px;z-index:9;font-size:9px;opacity:.55;color:var(--ink)}
+
+/* ถึงจุดหมาย / จบงาน */
+.rn-arrive{position:absolute;inset:0;z-index:20;display:flex;align-items:flex-end;justify-content:center;padding:14px;background:linear-gradient(180deg,rgba(5,10,20,0) 30%,rgba(5,10,20,.6));animation:rn-fade .3s}
+.rn-arrive[hidden]{display:none}
+@keyframes rn-fade{from{opacity:0}}
+.rn-card{width:min(520px,100%);padding:20px;border-radius:26px;background:#fff;color:#14233b;box-shadow:0 30px 60px rgba(0,0,0,.4);animation:rn-up .35s cubic-bezier(.2,1.2,.4,1)}
+@keyframes rn-up{from{transform:translateY(40px);opacity:0}}
+.rn-ahead{display:flex;gap:14px;align-items:center;margin-bottom:16px}
+.rn-ahead .rn-arw{position:static;width:56px;height:56px;padding:8px;border-radius:18px;background:linear-gradient(135deg,#ffb84a,#ff7a12);color:#1b1206}
+.rn-ahead small{color:#d26a00;font-weight:600}.rn-ahead b{display:block;font:700 24px/1.2 "Kanit",sans-serif}.rn-ahead em{font-style:normal;color:#5b6b85;font-size:14px}
+.rn-ab{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.rn-ab:has(> :only-child){grid-template-columns:1fr}
+.rn-big{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:64px;border:0;border-radius:18px;font:700 19px "Kanit",sans-serif;cursor:pointer;width:100%}
+.rn-big.ok{background:linear-gradient(135deg,#27d17f,#14a862);color:#062615;box-shadow:0 12px 24px rgba(20,168,98,.35)}
+.rn-big.bad{background:#fde4e4;color:#b42318}
+.rn-why{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}
+.rn-why[hidden]{display:none}
+.rn-why button{min-height:48px;border:1px solid #f5c2c2;border-radius:12px;background:#fff6f6;color:#b42318;font:600 14px "Kanit",sans-serif;cursor:pointer}
+.rn-link{display:block;margin:14px auto 0;border:0;background:none;color:#5b6b85;font:500 14px "Kanit",sans-serif;text-decoration:underline;cursor:pointer}
+.rn-left{margin:10px 0 0;text-align:center;color:#5b6b85;font-size:14px}
+.rn-card.fin{text-align:center}
+.rn-card.fin>b{display:block;font:700 26px "Kanit",sans-serif;margin:4px 0 14px}
+.rn-trophy{font-size:54px;line-height:1}
+.rn-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}
+.rn-stats span{padding:10px 6px;border-radius:14px;background:#f4f6fa;font-size:12px;color:#5b6b85}
+.rn-stats b{display:block;font:700 20px "Kanit",sans-serif;color:#14233b}
+.rn-card.fin .rn-big{margin-top:12px}
+
+/* พลุฉลอง */
+.rn-conf{position:absolute;inset:0;z-index:30;pointer-events:none;overflow:hidden}
+.rn-conf i{position:absolute;top:-12px;width:9px;height:14px;border-radius:2px;animation:rn-drop 2.2s cubic-bezier(.2,.6,.4,1) forwards}
+@keyframes rn-drop{to{transform:translate(var(--x),110vh) rotate(720deg);opacity:.9}}
+
+/* ปุ่มเข้าหน้านำทางในโหมดคนขับเดิม */
+.rn-go{display:flex!important;align-items:center;justify-content:center;gap:12px;width:100%;margin:0 0 8px;padding:12px 16px!important;border:0;border-radius:16px;background:linear-gradient(135deg,#132036 0%,#22406f 100%)!important;color:#fff!important;font-family:inherit;text-align:left;cursor:pointer;box-shadow:0 12px 26px rgba(19,32,54,.35),inset 0 0 0 1px rgba(255,184,74,.35)}
+.rn-go>span:last-child{display:flex;flex-direction:column;line-height:1.25}
+.rn-go b{font-weight:700;font-size:1.05rem;color:#fff}.rn-go small{color:#ffcf8a;font-size:.78rem}
+.rn-go-ic{width:40px;height:40px;display:grid;place-items:center;border-radius:12px;background:linear-gradient(135deg,#ffb84a,#ff7a12);color:#1b1206}
+.rn-go-ic .rn-arw{position:static;width:26px;height:26px}
+.rn-gmap{opacity:.85;font-size:.9em}
+@media (min-width:900px){.rn-sheet{left:auto;right:16px;width:420px}.rn-speed{bottom:28px;left:20px}.rn-bub{left:100px;right:460px;bottom:30px}}
+@media (prefers-reduced-motion:reduce){.rn-halo,.rn-arw.now,.rn-speed.fast{animation:none}}
+
+/* ---------- v7: ตั้งค่าเสียง + ช่วยเหลือ GPS ---------- */
+.rn-big.alt{background:#eef2f8;color:#14233b}
+.rn-card.rn-cgps,.rn-card.rn-cset{max-height:calc(100% - 20px);overflow:auto}
+.rn-gpsic{flex:0 0 auto;display:grid;place-items:center;width:56px;height:56px;border-radius:18px;background:#fff1e3;color:#e06a00}
+.rn-gpsic svg{width:28px;height:28px}
+.rn-steps{margin:0 0 16px;padding:0 0 0 22px;color:#34445e;font-size:15px;line-height:1.55}
+.rn-steps li{margin:0 0 8px}
+.rn-gpschip{position:absolute;z-index:6;left:50%;transform:translateX(-50%);bottom:calc(150px + env(safe-area-inset-bottom));padding:5px 12px;border-radius:99px;font:600 12.5px "Kanit",sans-serif;background:rgba(12,22,40,.78);color:#dfe8f6;backdrop-filter:blur(6px);pointer-events:none;transition:opacity .3s}
+.rn-gpschip[hidden]{display:none}
+.rn-gpschip::before{content:"";display:inline-block;width:8px;height:8px;margin-right:6px;border-radius:50%;background:currentColor;vertical-align:1px}
+.rn-gpschip.ok{color:#5ef0a6}.rn-gpschip.warn{color:#ffd166}.rn-gpschip.bad{color:#ff8a80}
+.rn-gpschip.wait::before{animation:rn-blink 1s infinite}
+@keyframes rn-blink{50%{opacity:.2}}
+.rn-av.big{width:52px;height:52px}
+.rn-lab{margin:6px 0 8px;font:600 14px "Kanit",sans-serif;color:#5b6b85}
+.rn-opts{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
+.rn-opts.three{grid-template-columns:repeat(3,1fr)}
+.rn-opt{display:flex;flex-direction:column;align-items:flex-start;gap:2px;min-height:54px;padding:10px 14px;border:2px solid #e3e9f2;border-radius:16px;background:#f7f9fc;color:#14233b;font:600 17px "Kanit",sans-serif;cursor:pointer;text-align:left}
+.rn-opts.three .rn-opt{align-items:center}
+.rn-opt small{font:400 12.5px "Sarabun","Kanit",sans-serif;color:#6a7a93}
+.rn-opt.on{border-color:#ff8a1f;background:#fff4e8;box-shadow:0 6px 16px rgba(255,138,31,.2)}
+.rn-vnote{margin:2px 0 14px;padding:10px 12px;border-radius:12px;background:#f1f5fa;color:#4a5b75;font-size:13px}
+.rn-card.rn-cset .rn-ab,.rn-card.rn-cgps .rn-ab{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.rn-card.rn-cgps .rn-ab:has(> :only-child){grid-template-columns:1fr}
+.rn-cset .rn-big{white-space:nowrap;font-size:17px}
+
+/* ---------- v8: เลนถนน · ป้ายจำกัดความเร็ว · รายการจุดเลี้ยว · แจ้งแผนที่โหลดไม่ได้ ---------- */
+.rn-man{pointer-events:auto;cursor:pointer}
+.rn-lanes{display:flex;gap:4px;margin-left:14px;padding:6px 10px;border-radius:0 0 16px 16px;background:#0d1729;box-shadow:0 10px 20px rgba(5,10,20,.35);pointer-events:none}
+.rn-lanes[hidden]{display:none}
+.rn-ln{display:grid;place-items:center;width:40px;height:44px;border-radius:10px;color:rgba(255,255,255,.28);border-left:2px dashed rgba(255,255,255,.18)}
+.rn-ln:first-child{border-left:0}
+.rn-ln .rn-arw{position:static;width:28px;height:28px}
+.rn-ln.on{color:#fff;background:rgba(255,138,31,.22);box-shadow:inset 0 0 0 2px #ff8a1f}
+.rn-lhint{display:inline-flex;align-items:center;gap:8px;padding:2px 6px;font:600 16px "Kanit",sans-serif;color:#ffd08a}
+.rn-lhint .rn-arw{position:static;width:24px;height:24px}
+.rn-limit{position:absolute;top:-14px;right:-14px;display:grid;place-items:center;width:34px;height:34px;border-radius:50%;background:#fff;border:4px solid #e0262b;color:#111;font:800 13px/1 "Kanit",sans-serif;font-style:normal;box-shadow:0 4px 10px rgba(0,0,0,.35)}
+.rn-limit[hidden]{display:none}
+.rn-speed{overflow:visible}
+.rn-slist{list-style:none;margin:0 0 14px;padding:0;max-height:min(52vh,420px);overflow:auto}
+.rn-slist li{display:flex;gap:12px;align-items:center;padding:10px 4px;border-bottom:1px solid #edf1f6}
+.rn-slist li:first-child{background:#fff4e8;border-radius:12px;padding:10px}
+.rn-slist .rn-arw{position:static;flex:0 0 auto;width:34px;height:34px;color:#e06a00}
+.rn-slist b{display:block;font:600 16px/1.3 "Kanit",sans-serif}.rn-slist small{color:#6a7a93}
+.rn-tilenote{position:absolute;z-index:5;left:50%;top:46%;transform:translate(-50%,-50%);width:min(420px,86%);padding:16px 18px;border-radius:18px;background:rgba(12,22,40,.86);border:1px solid rgba(255,255,255,.12);color:#c9d5e8;font-size:14px;line-height:1.5;text-align:center;backdrop-filter:blur(8px);pointer-events:none}
+.rn-tilenote b{display:block;margin-bottom:4px;color:#fff;font:600 17px "Kanit",sans-serif}
+.rn-tilenote[hidden]{display:none}
+.rn-root.over .rn-tilenote{top:40%}
+.rn-car[hidden]{display:none}
+.rn-card.rn-cset .rn-ab:has(> :only-child){grid-template-columns:1fr}
+
+/* ---------- v8.1: ชื่อบนแผนที่สำรอง (ตั้งตรงบนจอ) ---------- */
+.rn-lbls{position:absolute;left:0;top:0;width:0;height:0;z-index:3;pointer-events:none}
+.rn-lbl{position:absolute;left:0;top:0;display:flex;align-items:center;gap:4px;white-space:nowrap;will-change:transform;font:600 13px/1.15 "Kanit",sans-serif;color:#f1f5fb;text-shadow:0 0 3px #0b1424,0 0 3px #0b1424,0 1px 2px #0b1424}
+.rn-lbl[hidden]{display:none}
+.rn-lbl.road.c0,.rn-lbl.road.c1{color:#ffd59a}
+.rn-lbl.ref span{padding:1px 7px;border-radius:6px;background:#2f6fd8;color:#fff;font:700 11.5px/1.45 "Kanit",sans-serif;text-shadow:none;border:1.5px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,.35)}
+.rn-lbl.ref.c0 span,.rn-lbl.ref.c1 span{background:#1f56b8}
+.rn-lbl.vil{font:500 12px/1.15 "Sarabun","Kanit",sans-serif;color:#b9c7dc;letter-spacing:.2px}
+.rn-lbl.town{font:800 17px/1.1 "Kanit",sans-serif;color:#fff;letter-spacing:.3px}
+.rn-lbl.poi{font:500 12px/1.15 "Sarabun","Kanit",sans-serif;color:#e3e9f3}
+.rn-lbl.poi i{display:grid;place-items:center;width:22px;height:22px;border-radius:50%;background:#fff;font-style:normal;font-size:13px;line-height:1;box-shadow:0 2px 6px rgba(0,0,0,.4);text-shadow:none}
+.theme-day .rn-lbl{color:#2a3442;text-shadow:0 0 3px #fff,0 0 3px #fff,0 1px 2px #fff}
+.theme-day .rn-lbl.road.c0,.theme-day .rn-lbl.road.c1{color:#7a3d00}
+.theme-day .rn-lbl.vil{color:#5d6b4a}
+.theme-day .rn-lbl.town{color:#1c2430}
+.theme-day .rn-lbl.poi{color:#3b4656}
+.theme-day .rn-lbl.ref span{text-shadow:none}
+
+/* ---------- v9: คำแนะนำเสียง + แจ้งถนนผิด ---------- */
+.rn-vtip{margin:-6px 0 14px;padding:0 0 0 20px;color:#4a5b75;font-size:13.5px;line-height:1.5}
+.rn-vtip[hidden]{display:none}
+.rn-vtip li{margin:0 0 6px}
+.rn-osm{margin:0 0 14px;padding:12px 14px;border-radius:14px;background:#f1f5fa}
+.rn-osm a{display:flex;align-items:center;gap:8px;color:#1f56b8;font:600 15px "Kanit",sans-serif;text-decoration:none}
+.rn-osm a .rn-ic,.rn-osm a svg{width:20px;height:20px}
+.rn-osm small{display:block;margin-top:4px;color:#5b6b85;font-size:12.5px;line-height:1.45}

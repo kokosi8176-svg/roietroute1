@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>ผู้ดูแลระบบ · ROI ET Route</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap">
+<link rel="stylesheet" href="roiet-backend.css">
+<style>
+:root{--ink:#1b2b44;--ink2:#45546a;--mute:#7b8798;--navy:#142b4d;--grad:linear-gradient(110deg,#ffb84a 0%,#f58a12 100%);--sk-head:linear-gradient(105deg,#132a4b 0%,#1d3a63 55%,#27507f 100%);--body:"Kanit",Tahoma,sans-serif;--display:"Kanit",Tahoma,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:#f4f1eb;font-family:var(--body);color:var(--ink)}
+.ad-side{position:fixed;inset:0 auto 0 0;width:236px;padding:22px 14px;background:var(--sk-head);color:#dfe7f3;display:flex;flex-direction:column;gap:6px}
+.ad-logo{display:flex;align-items:center;gap:10px;margin:0 6px 22px;color:#fff;text-decoration:none}
+.ad-logo b{font:700 1.15rem var(--display);letter-spacing:.02em}.ad-logo small{display:block;color:#ffbd5b;font-size:.68rem;letter-spacing:.12em}
+.ad-side button{display:flex;align-items:center;gap:10px;padding:11px 14px;border:0;border-radius:12px;background:none;color:#dfe7f3;font:500 .93rem var(--body);text-align:left;cursor:pointer}
+.ad-side button:hover{background:rgba(255,255,255,.08)}
+.ad-side button[aria-current=page]{background:var(--grad);color:#142b4d;font-weight:600;box-shadow:0 8px 22px rgba(245,138,18,.35)}
+.ad-side .rr-ic{width:19px;height:19px}
+.ad-side .ad-back{margin-top:auto;color:#ffbd5b;text-decoration:none;font-size:.86rem;padding:10px 14px}
+main{margin-left:236px;padding:26px 30px 60px;max-width:1240px}
+.ad-head{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;margin-bottom:22px}
+.ad-head h1{margin:0;font:600 1.6rem var(--display);color:var(--navy)}.ad-head p{margin:4px 0 0;color:var(--mute)}
+.ad-who{padding:8px 14px;border-radius:999px;background:#fff;border:1px solid #ece4d6;font-size:.85rem}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;margin-bottom:18px}
+.card{padding:18px;border-radius:18px;background:#fff;box-shadow:0 1px 2px rgba(20,43,77,.05),0 12px 32px rgba(20,43,77,.07)}
+.card small{color:var(--mute);font-size:.8rem}.card b{display:block;margin-top:4px;font:600 1.7rem var(--display);color:var(--navy)}.card em{font-style:normal;color:var(--ink2);font-size:.8rem}
+.panel{padding:20px;border-radius:18px;background:#fff;box-shadow:0 1px 2px rgba(20,43,77,.05),0 12px 32px rgba(20,43,77,.07);margin-bottom:18px}
+.panel h2{display:flex;align-items:center;gap:8px;margin:0 0 14px;font:600 1.08rem var(--display);color:var(--navy)}
+.panel h2 .rr-ic{color:#e2700f}
+.bar-row{display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end;margin-bottom:14px}
+.bar-row label{display:flex;flex-direction:column;gap:4px;font-size:.8rem;color:var(--ink2)}
+.bar-row input,.bar-row select,.rr-t select,.rr-t input{padding:8px 10px;border:1px solid #dfe5ed;border-radius:9px;font:inherit;font-size:.88rem;background:#fff}
+.rr-t td .rr-btn{padding:5px 10px;font-size:.78rem}
+.muted{color:var(--mute)}
+.pill{display:inline-block;padding:2px 9px;border-radius:999px;font-size:.74rem;background:#eef0f3}
+.pill.on{background:#dff3e8;color:#16774a}.pill.off{background:#fde4e4;color:#b42318}
+.ad-login{max-width:400px;margin:12vh auto;padding:26px;border-radius:20px;background:#fff;box-shadow:0 20px 60px rgba(20,43,77,.15)}
+.ad-login h1{margin:0 0 4px;font:600 1.3rem var(--display);color:var(--navy)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.manual{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin:10px 0}
+.manual label{display:flex;flex-direction:column;gap:4px;font-size:.78rem;color:var(--ink2)}
+.manual input{padding:8px;border:1px solid #dfe5ed;border-radius:9px;font:inherit}
+@media (max-width:900px){.ad-side{position:static;width:auto;flex-direction:row;flex-wrap:wrap;padding:12px}.ad-logo{margin:0 10px 0 0}.ad-side .ad-back{margin:0}main{margin:0;padding:18px 14px 50px}.grid2{grid-template-columns:1fr}}
+</style>
+<link rel="stylesheet" href="roiet-admin6.css">
+</head>
+<body>
+<div id="app"></div>
+<script>
+(function () {
+  'use strict';
+  var API = (window.RR_API || '') + '/api', token = null, me = null, view = 'overview';
+  try { token = JSON.parse(localStorage.getItem('rr.token')); } catch (e) {}
+  var $ = function (s, r) { return (r || document).querySelector(s); }, $$ = function (s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); };
+  var esc = function (s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); };
+  var ROLE = { admin: 'ผู้ดูแลระบบ', staff: 'ผู้วางแผน', driver: 'คนขับ' };
+  var STATE = { ready: 'รอออกรถ', run: 'กำลังส่ง', finish: 'จบงานแล้ว', replaced: 'ถูกแทนด้วยแผนใหม่', cancel: 'ยกเลิก' };
+  var IC = {
+    home: '<path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/>', users: '<circle cx="9" cy="8" r="4"/><path d="M2 21a7 7 0 0 1 14 0M17 3.5a4 4 0 0 1 0 8M22 21a7 7 0 0 0-4-6.3"/>',
+    truck: '<path d="M10 17h4V5H2v12h3"/><path d="M14 9h4l4 4v4h-2"/><circle cx="7.5" cy="17.5" r="2.5"/><circle cx="17.5" cy="17.5" r="2.5"/>',
+    fuel: '<path d="M3 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18"/><path d="M3 22h12M7 7h4"/><path d="M15 12h2a2 2 0 0 1 2 2v3a2 2 0 0 0 4 0V9l-3-3"/>',
+    bell: '<path d="M6 8a6 6 0 1 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/>', shield: '<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/>', refresh: '<path d="M3 12a9 9 0 0 1 15-6.7L21 8M21 3v5h-5M21 12a9 9 0 0 1-15 6.7L3 16M3 21v-5h5"/>',
+  };
+  var ic = function (n) { return '<svg class="rr-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + (IC[n] || '') + '</svg>'; };
+  function api(m, p, b) {
+    return fetch(API + p, { method: m, headers: { 'content-type': 'application/json', authorization: token ? 'Bearer ' + token : '' }, body: b ? JSON.stringify(b) : undefined })
+      .then(function (r) { return r.json().catch(function () { return {}; }).then(function (j) { if (!r.ok) { var e = new Error(j.error || 'ผิดพลาด ' + r.status); e.status = r.status; throw e; } return j; }); });
+  }
+  function toast(t, k) { var e = $('#rr-toast'); if (!e) { e = document.createElement('div'); e.id = 'rr-toast'; e.className = 'rr-toast'; document.body.appendChild(e); } e.className = 'rr-toast on ' + (k || ''); e.textContent = t; clearTimeout(e._t); e._t = setTimeout(function () { e.classList.remove('on'); }, 3800); }
+  var ago = function (t) { if (!t) return '-'; var s = (Date.now() - t) / 1000; return s < 60 ? 'เมื่อสักครู่' : s < 3600 ? Math.floor(s / 60) + ' นาทีที่แล้ว' : s < 86400 ? Math.floor(s / 3600) + ' ชม. ที่แล้ว' : new Date(t).toLocaleDateString('th-TH', { day: 'numeric', month: 'short', year: '2-digit' }); };
+
+  function loginView(msg) {
+    $('#app').innerHTML = '<div class="ad-login"><h1>หน้าผู้ดูแลระบบ</h1><p class="rr-note">ROI ET Route · เข้าสู่ระบบด้วยบัญชีผู้ดูแลระบบ</p><form class="rr-form" style="margin-top:16px"><label>อีเมล<input name="e" type="email" autocomplete="email" required></label><label>รหัสผ่าน<input name="p" type="password" autocomplete="current-password" required></label><p class="rr-err"' + (msg ? '' : ' hidden') + '>' + esc(msg || '') + '</p><button class="rr-btn primary" type="submit">เข้าสู่ระบบ</button><a class="rr-note" href="./">← กลับหน้าเว็บหลัก</a></form></div>';
+    $('form').onsubmit = function (e) {
+      e.preventDefault();
+      api('POST', '/auth/login', { email: this.e.value, password: this.p.value }).then(function (r) {
+        if (r.user.role !== 'admin') return loginView('บัญชีนี้ไม่ใช่ผู้ดูแลระบบ');
+        token = r.token; localStorage.setItem('rr.token', JSON.stringify(r.token)); localStorage.setItem('rr.user', JSON.stringify(r.user)); me = r.user; shell();
+      }, function (er) { loginView(er.message); });
+    };
+  }
+  var NAV = [['overview', 'home', 'ภาพรวม'], ['users', 'users', 'ผู้ใช้งาน'], ['jobs', 'truck', 'งานจัดส่ง'], ['fuel', 'fuel', 'ราคาน้ำมัน'], ['notify', 'bell', 'การแจ้งเตือน'], ['settings', 'shield', 'ตั้งค่า & ความปลอดภัย']];
+  function shell() {
+    $('#app').innerHTML = '<nav class="ad-side" aria-label="เมนูผู้ดูแลระบบ"><a class="ad-logo" href="./"><div><b>ROI ET</b><small>ADMIN CONSOLE</small></div></a>' +
+      NAV.map(function (n) { return '<button type="button" data-v="' + n[0] + '">' + ic(n[1]) + n[2] + '</button>'; }).join('') + '<a class="ad-back" href="./">← กลับหน้าเว็บหลัก</a></nav><main><div class="ad-head"><div><h1></h1><p></p></div><span class="ad-who">' + esc(me.name) + ' · ' + ROLE[me.role] + '</span></div><div id="view"></div></main>';
+    $$('.ad-side button').forEach(function (b) { b.onclick = function () { go(b.dataset.v); }; });
+    go((location.hash || '#overview').slice(1));
+  }
+  var TITLES = { overview: ['ภาพรวมระบบ', 'สรุปผู้ใช้ งานจัดส่ง และสถานะแหล่งข้อมูล'], users: ['ผู้ใช้งาน', 'เพิ่มบัญชี กำหนดสิทธิ์ ระงับ หรือรีเซ็ตรหัสผ่าน'], jobs: ['งานจัดส่ง', 'ติดตามทุกงาน มอบหมายคนขับ และแก้สถานะจุดส่ง'], fuel: ['ราคาน้ำมัน', 'ราคาทุกปั๊มที่ดึงอัตโนมัติ และกรอกราคาปั๊มที่ไม่มีแหล่งอัตโนมัติ'], notify: ['การแจ้งเตือน', 'ข้อความล่าสุดและช่องทางส่งต่อ'], settings: ['ตั้งค่า & ความปลอดภัย', 'เช็กความพร้อมก่อนใช้งานจริง และใส่คีย์เสียงนำทางได้จากหน้านี้'] };
+  function go(v) {
+    if (!TITLES[v]) v = 'overview'; view = v; history.replaceState(null, '', '#' + v);
+    $$('.ad-side button').forEach(function (b) { b.setAttribute('aria-current', b.dataset.v === v ? 'page' : 'false'); });
+    $('.ad-head h1').textContent = TITLES[v][0]; $('.ad-head p').textContent = TITLES[v][1];
+    $('#view').innerHTML = '<p class="muted">กำลังโหลด…</p>';
+    ({ overview: overview, users: usersV, jobs: jobsV, fuel: fuelV, notify: notifyV, settings: settingsV })[v]();
+  }
+  function fail(e) { $('#view').innerHTML = '<p class="rr-err">' + esc(e.message) + '</p>'; if (e.status === 401 || e.status === 403) loginView(e.message); }
+
+  function overview() {
+    api('GET', '/admin/stats').then(function (s) {
+      var J = s.jobs, U = s.users, rate = J.stops ? Math.round(J.ok / J.stops * 100) : 0;
+      $('#view').innerHTML = '<div class="cards">' +
+        card('ผู้ใช้ทั้งหมด', U.total, 'แอดมิน ' + (U.byRole.admin || 0) + ' · ผู้วางแผน ' + (U.byRole.staff || 0) + ' · คนขับ ' + (U.byRole.driver || 0)) +
+        card('ใช้งานใน 7 วัน', U.active7d, 'คนที่เข้าสู่ระบบล่าสุด') +
+        card('งานจัดส่งทั้งหมด', J.total, '7 วันล่าสุด ' + J.last7d + ' งาน · กำลังส่ง ' + (J.byState.run || 0)) +
+        card('ส่งสำเร็จ', rate + '%', 'สำเร็จ ' + J.ok + ' / ' + J.stops + ' จุด · ไม่สำเร็จ ' + J.fail) +
+        card('ระยะทางตามแผนรวม', J.km.toLocaleString('th-TH') + ' กม.', 'จากทุกงานในระบบ') + '</div>' +
+        '<div class="grid2"><div class="panel"><h2>' + ic('fuel') + 'แหล่งราคาน้ำมัน</h2>' + srcTable(s.fuel) + '</div>' +
+        '<div class="panel"><h2>' + ic('bell') + 'ช่องทางแจ้งเตือน</h2><table class="rr-t"><tr><td>กระดิ่งบนเว็บ</td><td><span class="pill on">เปิดอยู่เสมอ</span></td></tr>' +
+        ['telegram', 'discord', 'line'].map(function (k) { return '<tr><td>' + { telegram: 'Telegram', discord: 'Discord', line: 'LINE (Messaging API)' }[k] + '</td><td><span class="pill ' + (s.channels[k] ? 'on' : '') + '">' + (s.channels[k] ? 'ตั้งค่าแล้ว' : 'ยังไม่ได้ตั้งค่า') + '</span></td></tr>'; }).join('') +
+        '<tr><td>สมัครใช้งานเอง</td><td><span class="pill ' + (s.signup ? 'on' : 'off') + '">' + (s.signup ? 'เปิด' : 'ปิด (แอดมินสร้างบัญชีให้)') + '</span></td></tr></table><p class="rr-note" style="margin-top:10px">ตั้งค่าช่องทางได้ที่ Netlify &gt; Site configuration &gt; Environment variables (ดูคู่มือติดตั้ง)</p></div></div>';
+    }, fail);
+  }
+  function card(t, v, e) { return '<div class="card"><small>' + esc(t) + '</small><b>' + esc(v) + '</b><em>' + esc(e) + '</em></div>'; }
+  var SRC = { pttor: 'ปตท. (ทางการ)', bangchak: 'บางจาก (ทางการ)', allbrands: 'เว็บรวมราคาทุกปั๊ม', feed: 'แหล่ง JSON เพิ่มเติม' };
+  function srcTable(src) {
+    var k = Object.keys(src || {});
+    if (!k.length) return '<p class="muted">ยังไม่เคยดึงราคา กด "ดึงราคาตอนนี้" ในเมนูราคาน้ำมัน</p>';
+    return '<table class="rr-t"><thead><tr><th>แหล่ง</th><th>สถานะ</th><th>รายละเอียด</th></tr></thead>' + k.map(function (x) { var s = src[x]; return '<tr><td>' + esc(SRC[x] || x) + '</td><td><span class="pill ' + (s.ok ? 'on' : s.ok === false ? 'off' : '') + '">' + (s.ok ? 'ปกติ' : s.ok === false ? 'ดึงไม่ได้' : 'ไม่ได้ใช้') + '</span></td><td class="muted">' + (s.ok ? s.count + ' ราคา · ' + s.ms + ' ms · ' + ago(s.at) : esc(s.error || s.note || '')) + '</td></tr>'; }).join('') + '</table>';
+  }
+
+  function usersV() {
+    api('GET', '/admin/users').then(function (r) {
+      $('#view').innerHTML = '<div class="panel"><h2>' + ic('users') + 'เพิ่มบัญชีใหม่</h2><form class="bar-row" id="add"><label>ชื่อ<input name="name" required></label><label>อีเมล<input name="email" type="email" required></label><label>รหัสผ่านเริ่มต้น<input name="password" minlength="8" required placeholder="อย่างน้อย 8 ตัว"></label><label>สิทธิ์<select name="role"><option value="driver">คนขับ</option><option value="staff">ผู้วางแผน</option><option value="admin">ผู้ดูแลระบบ</option></select></label><button class="rr-btn primary" type="submit">เพิ่มบัญชี</button></form></div>' +
+        '<div class="panel"><h2>' + ic('users') + 'ผู้ใช้ทั้งหมด (' + r.users.length + ')</h2><div class="rr-tw"><table class="rr-t"><thead><tr><th>ชื่อ</th><th>อีเมล</th><th>สิทธิ์</th><th>สถานะ</th><th>เข้าระบบล่าสุด</th><th></th></tr></thead><tbody>' +
+        r.users.map(function (u) {
+          return '<tr data-id="' + u.id + '"><td><b>' + esc(u.name) + '</b>' + (u.id === me.id ? ' <span class="pill">คุณ</span>' : '') + '</td><td>' + esc(u.email) + '</td><td><select data-a="role"' + (u.id === me.id ? ' disabled' : '') + '>' + Object.keys(ROLE).map(function (k) { return '<option value="' + k + '"' + (u.role === k ? ' selected' : '') + '>' + ROLE[k] + '</option>'; }).join('') + '</select></td>' +
+            '<td><span class="pill ' + (u.disabled ? 'off' : 'on') + '">' + (u.disabled ? 'ระงับ' : 'ใช้งาน') + '</span></td><td class="muted">' + ago(u.lastLogin) + '</td><td style="white-space:nowrap">' +
+            (u.id === me.id ? '' : '<button class="rr-btn" data-a="dis">' + (u.disabled ? 'เปิดใช้' : 'ระงับ') + '</button> <button class="rr-btn" data-a="pw">รีเซ็ตรหัส</button>') + '</td></tr>';
+        }).join('') + '</tbody></table></div></div>';
+      $('#add').onsubmit = function (e) {
+        e.preventDefault(); var f = this;
+        api('POST', '/admin/users', { name: f.name.value, email: f.email.value, password: f.password.value, role: f.role.value }).then(function () { toast('เพิ่มบัญชีแล้ว ส่งอีเมลกับรหัสผ่านให้เจ้าของบัญชี', 'ok'); usersV(); }, function (er) { toast(er.message, 'bad'); });
+      };
+      $$('tr[data-id]').forEach(function (tr) {
+        var id = tr.dataset.id, u = r.users.filter(function (x) { return x.id === id; })[0];
+        var sel = $('[data-a=role]', tr); sel.onchange = function () { api('PATCH', '/admin/users/' + id, { role: sel.value }).then(function () { toast('เปลี่ยนสิทธิ์เป็น ' + ROLE[sel.value] + ' แล้ว', 'ok'); }, function (er) { toast(er.message, 'bad'); usersV(); }); };
+        var dis = $('[data-a=dis]', tr); if (dis) dis.onclick = function () { api('PATCH', '/admin/users/' + id, { disabled: !u.disabled }).then(usersV, function (er) { toast(er.message, 'bad'); }); };
+        var pw = $('[data-a=pw]', tr); if (pw) pw.onclick = function () {
+          if (!confirm('ตั้งรหัสผ่านใหม่ให้ ' + u.name + '? รหัสเดิมจะใช้ไม่ได้ทันที')) return;
+          api('PATCH', '/admin/users/' + id, { resetPassword: true }).then(function (x) { prompt('รหัสผ่านชั่วคราวของ ' + u.name + ' (คัดลอกส่งให้เจ้าของบัญชี แล้วให้เปลี่ยนเองหลังเข้าระบบ)', x.tempPassword); }, function (er) { toast(er.message, 'bad'); });
+        };
+      });
+    }, fail);
+  }
+
+  function jobsV(state) {
+    api('GET', '/jobs?limit=200' + (state ? '&state=' + state : '')).then(function (r) {
+      $('#view').innerHTML = '<div class="panel"><div class="bar-row"><label>สถานะ<select id="st"><option value="">ทั้งหมด</option>' + Object.keys(STATE).map(function (k) { return '<option value="' + k + '"' + (state === k ? ' selected' : '') + '>' + STATE[k] + '</option>'; }).join('') + '</select></label><span class="muted">' + r.jobs.length + ' งาน</span></div>' +
+        (r.jobs.length ? '<div class="rr-tw"><table class="rr-t"><thead><tr><th>งาน</th><th>สถานะ</th><th>ความคืบหน้า</th><th>คนขับ</th><th>สร้างโดย</th><th>อัปเดต</th></tr></thead><tbody>' + r.jobs.map(function (j) {
+          var s = j.stats || { n: 0, ok: 0, fail: 0 };
+          return '<tr data-id="' + esc(j.id) + '" style="cursor:pointer"><td><b>' + esc(j.title) + '</b><br><span class="muted">' + esc(j.car || '') + (j.pkm != null ? ' · ' + j.pkm.toFixed(1) + ' กม.' : '') + '</span></td><td><span class="rr-st ' + j.state + '">' + (STATE[j.state] || j.state) + '</span></td><td style="min-width:150px"><span class="rr-prog"><i style="width:' + (s.n ? s.ok / s.n * 100 : 0) + '%"></i><i class="f" style="width:' + (s.n ? s.fail / s.n * 100 : 0) + '%"></i></span><span class="muted">' + s.ok + '/' + s.n + (s.fail ? ' · ไม่สำเร็จ ' + s.fail : '') + '</span></td><td>' + esc(j.driverName || '–') + '</td><td>' + esc(j.ownerName || '') + '</td><td class="muted">' + ago(j.updated) + '</td></tr>';
+        }).join('') + '</tbody></table></div>' : '<p class="muted">ยังไม่มีงาน งานจะขึ้นเองเมื่อผู้ใช้กด "โหมดคนขับ" ในหน้าวางแผนเส้นทางขณะเข้าสู่ระบบ</p>') + '</div><div id="jd"></div>';
+      $('#st').onchange = function () { jobsV(this.value); };
+      $$('tr[data-id]').forEach(function (tr) { tr.onclick = function () { jobDetail(tr.dataset.id); }; });
+    }, fail);
+  }
+  function jobDetail(id) {
+    api('GET', '/jobs/' + encodeURIComponent(id)).then(function (r) {
+      var j = r.job, box = $('#jd');
+      box.innerHTML = '<div class="panel"><h2>' + ic('truck') + esc(j.title) + '</h2><form class="bar-row" id="asg"><label>มอบหมายคนขับ (อีเมล)<input name="e" type="email" placeholder="driver@example.com"></label><button class="rr-btn" type="submit">มอบหมาย</button><span class="muted">ตอนนี้: ' + esc(j.driverName || 'ยังไม่มอบหมาย') + '</span>' +
+        (['ready', 'run'].indexOf(j.state) >= 0 ? ' <button class="rr-btn" type="button" id="cancel">ยกเลิกงาน</button>' : '') + '</form>' +
+        '<div class="rr-tw"><table class="rr-t"><thead><tr><th>#</th><th>จุดส่ง</th><th>ถึงประมาณ</th><th>สถานะ</th><th>แก้สถานะ</th></tr></thead><tbody>' + j.items.filter(function (x) { return x.k === 'stop'; }).map(function (x) {
+          return '<tr class="' + x.st + '"><td>' + x.no + '</td><td>' + esc(x.n) + (x.r ? '<small>เหตุผล: ' + esc(x.r) + '</small>' : '') + '</td><td>' + esc(x.etaTxt) + '</td><td>' + (x.st === 'ok' ? 'สำเร็จ' : x.st === 'fail' ? 'ไม่สำเร็จ' : 'รอส่ง') + '</td><td style="white-space:nowrap"><button class="rr-btn" data-no="' + x.no + '" data-s="ok">สำเร็จ</button> <button class="rr-btn" data-no="' + x.no + '" data-s="fail">ไม่สำเร็จ</button> <button class="rr-btn" data-no="' + x.no + '" data-s="todo">รอส่ง</button></td></tr>';
+        }).join('') + '</tbody></table></div></div>';
+      box.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      $('#asg').onsubmit = function (e) { e.preventDefault(); api('PATCH', '/jobs/' + encodeURIComponent(id), { driverEmail: this.e.value.trim() }).then(function () { toast('มอบหมายแล้ว คนขับได้รับแจ้งเตือน', 'ok'); jobsV(); setTimeout(function () { jobDetail(id); }, 300); }, function (er) { toast(er.message, 'bad'); }); };
+      var c = $('#cancel'); if (c) c.onclick = function () { if (confirm('ยกเลิกงานนี้?')) api('DELETE', '/jobs/' + encodeURIComponent(id)).then(function () { toast('ยกเลิกแล้ว'); jobsV(); }); };
+      $$('button[data-no]', box).forEach(function (b) {
+        b.onclick = function () {
+          var why = b.dataset.s === 'fail' ? prompt('เหตุผลที่ส่งไม่สำเร็จ', 'ร้านปิด') : '';
+          if (why === null) return;
+          api('PATCH', '/jobs/' + encodeURIComponent(id) + '/stops/' + b.dataset.no, { st: b.dataset.s, r: why }).then(function () { toast('บันทึกแล้ว', 'ok'); jobDetail(id); }, function (er) { toast(er.message, 'bad'); });
+        };
+      });
+    }, function (e) { toast(e.message, 'bad'); });
+  }
+
+  var BR = ['ptt', 'bcp', 'shell', 'pt', 'caltex', 'esso', 'susco', 'irpc', 'pure'], FUE = ['diesel', 'diesel_b20', 'g95', 'g91', 'e20', 'e85', 'benzine', 'diesel_premium', 'g95_premium'];
+  function fuelV() {
+    api('GET', '/fuel').then(function (D) {
+      var brands = BR.filter(function (b) { return D.brands[b]; }), fuels = FUE.filter(function (f) { return brands.some(function (b) { return D.brands[b].prices[f] != null; }); });
+      $('#view').innerHTML = '<div class="panel"><div class="bar-row"><button class="rr-btn primary" id="rf">' + ic('refresh') + 'ดึงราคาตอนนี้</button><span class="muted">อัปเดตล่าสุด ' + ago(D.updatedAt) + ' · ตรวจล่าสุด ' + ago(D.checkedAt) + ' · ระบบดึงเองทุกชั่วโมง</span></div>' +
+        (brands.length ? '<div class="rr-tw"><table class="rr-t rr-fuel"><tr><th>ชนิด</th>' + brands.map(function (b) { return '<th>' + esc(D.names.brands[b]) + (D.brands[b].stale ? '<br><small class="muted">(ราคาเก่า)</small>' : '') + '</th>'; }).join('') + '</tr>' +
+          fuels.map(function (f) { return '<tr><th>' + esc(D.names.fuels[f]) + '</th>' + brands.map(function (b) { var v = D.brands[b].prices[f], best = D.cheapest[f] && D.cheapest[f].brand === b; return '<td class="' + (v == null ? 'na' : best ? 'best' : '') + '">' + (v == null ? '–' : v.toFixed(2) + (D.brands[b].src[f] === 'manual' ? '<sup>*</sup>' : '')) + '</td>'; }).join('') + '</tr>'; }).join('') + '</table></div><p class="rr-note">* = แอดมินกรอกเอง · สีเขียว = ถูกที่สุด</p>' : '<p class="muted">ยังไม่มีราคา กด "ดึงราคาตอนนี้"</p>') + '</div>' +
+        '<div class="grid2"><div class="panel"><h2>' + ic('fuel') + 'สถานะแหล่งข้อมูล</h2>' + srcTable(D.sources) + '<p class="rr-note" style="margin-top:10px">ถ้าแหล่งไหนดึงไม่ได้ ระบบใช้ราคาล่าสุดที่เก็บไว้ หรือกรอกเองทางขวา</p></div>' +
+        '<div class="panel"><h2>' + ic('fuel') + 'กรอกราคาเอง</h2><form id="man"><label class="muted">ปั๊ม <select name="b">' + BR.map(function (b) { return '<option value="' + b + '">' + esc(D.names.brands[b]) + '</option>'; }).join('') + '</select></label><div class="manual">' +
+        ['diesel', 'diesel_b20', 'g95', 'g91', 'e20', 'e85'].map(function (f) { return '<label>' + esc(D.names.fuels[f]) + '<input name="' + f + '" inputmode="decimal" placeholder="บาท/ลิตร"></label>'; }).join('') + '</div><label class="rr-note"><input type="checkbox" name="force"> ใช้ราคานี้แทนราคาอัตโนมัติด้วย</label><div class="bar-row" style="margin-top:10px"><button class="rr-btn primary" type="submit">บันทึกราคา</button><span class="muted">เว้นว่างทุกช่องแล้วบันทึก = ลบราคาที่กรอกเองของปั๊มนี้</span></div></form></div></div>';
+      $('#rf').onclick = function () { var b = this; b.disabled = true; b.textContent = 'กำลังดึงราคา…'; api('POST', '/fuel/refresh').then(function () { toast('ดึงราคาใหม่แล้ว', 'ok'); fuelV(); }, function (er) { toast(er.message, 'bad'); fuelV(); }); };
+      var f = $('#man');
+      function fill() { var b = D.brands[f.b.value]; $$('.manual input', f).forEach(function (i) { i.value = b && b.src && b.src[i.name] === 'manual' ? b.prices[i.name] : ''; }); }
+      f.b.onchange = fill; fill();
+      f.onsubmit = function (e) {
+        e.preventDefault(); var p = {};
+        $$('.manual input', f).forEach(function (i) { if (i.value.trim()) p[i.name] = i.value.trim(); });
+        api('PUT', '/fuel/manual', { brand: f.b.value, prices: p, force: f.force.checked }).then(function () { toast('บันทึกราคาแล้ว', 'ok'); fuelV(); }, function (er) { toast(er.message, 'bad'); });
+      };
+    }, fail);
+  }
+
+  function notifyV() {
+    api('GET', '/notifications?limit=60').then(function (r) {
+      $('#view').innerHTML = '<div class="panel"><div class="bar-row"><button class="rr-btn primary" id="tst">' + ic('bell') + 'ส่งแจ้งเตือนทดสอบ</button><button class="rr-btn" id="rd">อ่านทั้งหมด</button><span class="muted">ยังไม่อ่าน ' + r.unread + '</span></div>' +
+        (r.items.length ? r.items.map(function (x) { return '<div class="rr-n ' + x.level + (x.read ? '' : ' new') + '" style="cursor:default">' + ic(x.type === 'stop_fail' ? 'bell' : x.type === 'fuel_change' ? 'fuel' : 'truck') + '<span><b>' + esc(x.title) + '</b><small>' + esc(x.body) + '</small><em>' + ago(x.at) + (x.by ? ' · ' + esc(x.by) : '') + '</em></span></div>'; }).join('') : '<p class="muted">ยังไม่มีการแจ้งเตือน</p>') + '</div>';
+      $('#tst').onclick = function () { api('POST', '/admin/notify-test').then(function () { toast('ส่งแล้ว (ถ้าตั้ง Telegram/Discord/LINE ไว้ จะเด้งที่นั่นด้วย)', 'ok'); notifyV(); }); };
+      $('#rd').onclick = function () { api('POST', '/notifications/read', { all: true }).then(notifyV); };
+    }, fail);
+  }
+
+  var LV = { must: 'ต้องทำ', should: 'ควรทำ', nice: 'แนะนำ' };
+  function settingsV() {
+    Promise.all([api('GET', '/admin/health'), api('GET', '/admin/settings')]).then(function (R) {
+      var H = R[0].checks, T = R[1].tts, done = H.filter(function (c) { return c.ok; }).length;
+      var from = function (k) { return k.from === 'env' ? 'ตั้งใน Netlify ' + k.tail : k.from === 'admin' ? 'บันทึกในหน้านี้ ' + k.tail : 'ยังไม่ได้ใส่'; };
+      $('#view').innerHTML = '<div class="panel"><h2>' + ic('shield') + 'ความพร้อมก่อนใช้งานจริง <span class="muted" style="font-weight:400">ผ่าน ' + done + '/' + H.length + '</span></h2><table class="rr-t">' +
+        H.map(function (c) { return '<tr><td style="width:96px"><span class="pill ' + (c.ok ? 'on' : c.level === 'must' ? 'off' : '') + '">' + (c.ok ? 'ผ่าน' : LV[c.level]) + '</span></td><td><b>' + esc(c.title) + '</b>' + (c.fix ? '<br><small class="muted">' + esc(c.fix) + '</small>' : '') + '</td></tr>'; }).join('') + '</table></div>' +
+        '<div class="panel"><h2>' + ic('bell') + 'เสียงนำทางแบบธรรมชาติ</h2><p class="muted">ตอนนี้ใช้: <b>' + (T.provider === 'google' ? 'Google Chirp 3 HD' : T.provider === 'azure' ? 'Azure Neural' : 'เสียงในเครื่องของคนขับ (ยังไม่ได้ใส่คีย์)') + '</b> · ใส่คีย์ที่นี่ได้เลย ไม่ต้อง deploy ใหม่ (คีย์ใน Netlify จะถูกใช้ก่อนถ้ามีทั้งสองที่)</p>' +
+        '<form id="tts" class="manual" style="grid-template-columns:1fr">' +
+        '<label>คีย์ Google Cloud Text-to-Speech <small class="muted">(' + esc(from(T.google)) + ')</small><input name="googleTtsKey" autocomplete="off" placeholder="วางคีย์ใหม่ หรือเว้นว่างไว้เพื่อใช้ค่าเดิม"></label>' +
+        '<label>คีย์ Azure Speech <small class="muted">(' + esc(from(T.azure)) + ')</small><input name="azureKey" autocomplete="off" placeholder="ไม่บังคับ ถ้าใช้ Google แล้ว"></label>' +
+        '<label>ภูมิภาค Azure<input name="azureRegion" placeholder="southeastasia" value="' + esc(T.azure.region || '') + '"></label>' +
+        '<label>ถ้ามีทั้งสองเจ้าให้ใช้<select name="ttsProvider"><option value="">อัตโนมัติ (Google ก่อน)</option><option value="google"' + (T.pref === 'google' ? ' selected' : '') + '>Google</option><option value="azure"' + (T.pref === 'azure' ? ' selected' : '') + '>Azure</option></select></label>' +
+        '<div class="bar-row"><button class="rr-btn primary" type="submit">บันทึก</button><button class="rr-btn" type="button" data-g="f">ฟังเสียงผู้หญิง</button><button class="rr-btn" type="button" data-g="m">ฟังเสียงผู้ชาย</button>' +
+        (T.google.from === 'admin' ? '<button class="rr-btn" type="button" id="delg">ลบคีย์ Google</button>' : '') + (T.azure.from === 'admin' ? '<button class="rr-btn" type="button" id="dela">ลบคีย์ Azure</button>' : '') + '</div></form>' +
+        '<p class="rr-note" style="margin-top:10px">วิธีขอคีย์ฟรีอยู่ใน "คู่มือระบบหลังบ้าน.txt" หัวข้อเสียงธรรมชาติ · คีย์เก็บไว้ในระบบหลังบ้านเท่านั้น หน้านี้โชว์แค่ 4 ตัวท้าย</p></div>';
+      var f = $('#tts');
+      f.onsubmit = function (e) {
+        e.preventDefault(); var b = { azureRegion: f.azureRegion.value.trim(), ttsProvider: f.ttsProvider.value };
+        if (f.googleTtsKey.value.trim()) b.googleTtsKey = f.googleTtsKey.value.trim();
+        if (f.azureKey.value.trim()) b.azureKey = f.azureKey.value.trim();
+        api('PUT', '/admin/settings', b).then(function (r) { toast(r.tts.provider ? 'บันทึกแล้ว ใช้เสียงธรรมชาติได้ทันที' : 'บันทึกแล้ว', 'ok'); settingsV(); }, function (er) { toast(er.message, 'bad'); });
+      };
+      var del = function (k) { var b = {}; b[k] = ''; api('PUT', '/admin/settings', b).then(function () { toast('ลบคีย์แล้ว', 'ok'); settingsV(); }, function (er) { toast(er.message, 'bad'); }); };
+      if ($('#delg')) $('#delg').onclick = function () { del('googleTtsKey'); };
+      if ($('#dela')) $('#dela').onclick = function () { del('azureKey'); };
+      $$('[data-g]', f).forEach(function (b) {
+        b.onclick = function () {
+          var g = b.dataset.g, t = g === 'm' ? 'สวัสดีครับ ทดสอบเสียงนำทาง อีกสองร้อยเมตร เลี้ยวซ้ายครับ' : 'สวัสดีค่ะ ทดสอบเสียงนำทาง อีกสองร้อยเมตร เลี้ยวซ้ายค่ะ';
+          b.disabled = true;
+          api('POST', '/admin/tts-test', { g: g }).then(function () {
+            var a = new Audio(API + '/tts?g=' + g + '&r=0&t=' + encodeURIComponent(t)); a.play().catch(function () {}); toast('กำลังเล่นเสียงทดสอบ', 'ok');
+          }, function (er) { toast(er.message, 'bad'); }).then(function () { b.disabled = false; });
+        };
+      });
+    }, fail);
+  }
+
+  if (!token) loginView();
+  else api('GET', '/auth/me').then(function (r) { me = r.user; if (me.role !== 'admin') loginView('บัญชีนี้ไม่ใช่ผู้ดูแลระบบ'); else shell(); }, function (e) { loginView(e.status === 401 ? '' : e.message); });
+})();
+</script>
+</body>
+</html>
